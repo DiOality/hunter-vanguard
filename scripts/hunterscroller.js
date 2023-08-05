@@ -37,7 +37,7 @@ class Player {
 }
 
 class Platform {
-    constructor({x, y}) {
+    constructor({x, y}, image) {
         this.position = {
             x: x,
             y: y
@@ -57,7 +57,13 @@ image.src = platform
 console.log(image);
 
 const player = new Player ()
-const platforms = [new Platform({x: 200, y: 100}), new Platform({x: 500, y: 200})
+const platforms = [
+    new Platform({
+        x: 200, 
+        y: 100,
+        image: image
+    }),
+     new Platform({x: 500, y: 200, image})
 ]
 
 const keys = {
