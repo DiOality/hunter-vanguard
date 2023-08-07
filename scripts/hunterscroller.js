@@ -1,4 +1,6 @@
 import platform from '../Img/platform.png'
+import hills from '../Img/hills.png'
+import background from '../Img/background.png'
 
 const canvas = document.querySelector('#gameCanvas')
 const c = canvas.getContext('2d')
@@ -37,33 +39,75 @@ class Player {
 }
 
 class Platform {
-    constructor({x, y}, image) {
+    constructor({x, y, image}) {
         this.position = {
             x: x,
             y: y
         }
-        this.width = 200
-        this.height = 20
         this.image = image
+        this.width = image.width
+        this.height = image.height
+        
     }
     draw(){
         c.drawImage(this.image, this.position.x, this.position.y )
-        // c.fillStyle = 'grey'
-        // c.fillRect(this.position.x, this.position.y, this.width, this.height)
     }
 }
-const image = new Image()
-image.src = platform
-console.log(image);
+
+class GenericObject {
+    constructor({x, y, image}) {
+        this.position = {
+            x: x,
+            y: y
+        }
+        this.image = image
+        this.width = image.width
+        this.height = image.height
+        
+    }
+    draw(){
+        c.drawImage(this.image, this.position.x, this.position.y )
+    }
+}
+
+function createImage(imageSrc){
+   const image = new Image()
+   image.src = imageSrc 
+return image
+}
+
+const platformImage = createImage(platform)
 
 const player = new Player ()
 const platforms = [
     new Platform({
-        x: 200, 
-        y: 100,
-        image: image
+        x: -1, 
+        y: 470,
+        image: platformImage
     }),
-     new Platform({x: 500, y: 200, image})
+     new Platform({
+        x: platformImage.width -3,
+        y: 470, 
+        image: platformImage
+    }),
+    new Platform({
+        x: platformImage.width *2 +100,
+        y: 470, 
+        image: platformImage
+    })
+]
+
+const genericObjects = [
+    new GenericObject({
+        x: -1,
+        y: -1,
+        image: createImage(background)
+    }),
+    new GenericObject({
+        x: -1,
+        y: -1,
+        image: createImage(hills)
+    })
 ]
 
 const keys = {
@@ -76,15 +120,19 @@ const keys = {
 }
 
 
+
+
 let scrollOffset = 0
-
-
-
 
 export function animate(){
     requestAnimationFrame(animate)
     c.fillStyle = 'white'
     c.clearRect(0, 0, canvas.width, canvas.height)
+
+    genericObjects.forEach(genericObject => {
+        genericObject.draw()
+    } )
+
     platforms.forEach(platform => {
       platform.draw()
     })
@@ -102,12 +150,18 @@ export function animate(){
             platforms.forEach(platform => {
                 platform.position.x -= 3
               })
+            genericObjects.forEach(genericObject =>{
+                genericObject.position.x -= 1
+            })
             
         }else if(keys.left.pressed){
             scrollOffset -=3
             platforms.forEach(platform => {
                 platform.position.x +=3
               })
+            genericObjects.forEach(genericObject =>{
+                genericObject.position.x +=1
+            })
             
         }
 
