@@ -169,7 +169,7 @@ export function animate(){
     if(keys.right.pressed && player.position.x < 450){
         player.velocity.x = player.speed
     } else if (keys.left.pressed && player.position.x > 100){
-        player.velocity.x = player.speed 
+        player.velocity.x = -player.speed 
     }else{ 
         player.velocity.x = 0
 
@@ -199,7 +199,16 @@ export function animate(){
     // platform collision detection
     platforms.forEach(platform => {
 
-    if(player.position.y + player.height <= platform.position.y && player.position.y + player.height + player.velocity.y >= platform.position.y && player.position.x + player.width >= platform.position.x && player.position.x <= platform.position.x + platform.width) {
+    if(
+        player.position.y + player.height <= platform.position.y 
+        && 
+        player.position.y + player.height + player.velocity.y 
+        >= 
+        platform.position.y && 
+        player.position.x + player.width >= platform.position.x 
+        && 
+        player.position.x <= platform.position.x + platform.width
+        ) {
         player.velocity.y = 0
     }
 })
