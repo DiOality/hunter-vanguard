@@ -9,10 +9,10 @@ const c = canvas.getContext('2d')
 canvas.width = 1024;
 canvas.height = 576;
 
-const gravity = 0.5;
+const gravity = 0.49;
 class Player {
     constructor(){
-        this.speed = 10
+        this.speed = 7
         this.position = {
             x:100,
             y:100
@@ -77,11 +77,10 @@ function createImage(imageSrc){
 return image
 }
 
-let platformImage = createImage(platform)
-
+let platformImage = createImage(platform);
+let platformSmallTallImage = createImage(platformSmallTall);
 let player = new Player ()
 let platforms = []
-
 let genericObjects = []
 
 const keys = {
@@ -102,8 +101,12 @@ platformImage = createImage(platform)
  player = new Player ()
  platforms = [
     new Platform({
-        x: platformImage.width *4 + 300 -1,
-        y: 370, 
+        x: platformImage.width *4 
+        + 300 
+        -2 +
+        platformImage.width - 
+        platformSmallTallImage.width,
+        y: 270, 
         image: createImage(platformSmallTall)
     }),
 
@@ -129,6 +132,11 @@ platformImage = createImage(platform)
     }),
     new Platform({
         x: platformImage.width *4 + 300 -2,
+        y: 470, 
+        image: platformImage
+    }),
+    new Platform({
+        x: platformImage.width *5 + 700 -2,
         y: 470, 
         image: platformImage
     })
@@ -166,9 +174,10 @@ export function animate(){
     })
     player.update()
     
-    if(keys.right.pressed && player.position.x < 450){
+    if(keys.right.pressed && player.position.x < 400){
         player.velocity.x = player.speed
-    } else if (keys.left.pressed && player.position.x > 100){
+    } else if ((keys.left.pressed && player.position.x > 100) || (keys.left.pressed && scrollOffset === 0 && player.position.x > 0)
+    ){
         player.velocity.x = -player.speed 
     }else{ 
         player.velocity.x = 0
@@ -182,7 +191,7 @@ export function animate(){
                 genericObject.position.x -= player.speed * .66
             })
             
-        }else if(keys.left.pressed){
+        }else if(keys.left.pressed && scrollOffset > 0){
             scrollOffset -= player.speed
             platforms.forEach(platform => {
                 platform.position.x += player.speed
@@ -213,7 +222,7 @@ export function animate(){
     }
 })
 // win condition
- if(scrollOffset > 2000){
+ if(scrollOffset > platformImage.width *5 + 700 -2){
     console.log('You Passed the Hunter Exam');
  }
 // lose condition
@@ -242,7 +251,7 @@ window.addEventListener('keydown', (e) => {
          break
         case 87:
          console.log('up');
-         player.velocity.y -= 10
+         player.velocity.y -= 14
          break     
     }
 
@@ -264,7 +273,6 @@ window.addEventListener('keyup', (e) => {
          break
         case 87:
          console.log('up');
-         player.velocity.y -= 10
          break     
     }
 
