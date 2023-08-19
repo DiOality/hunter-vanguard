@@ -2,6 +2,10 @@ import platform from '../Img/platform.png'
 import hills from '../Img/hills.png'
 import background from '../Img/background.png'
 import platformSmallTall from '../Img/platformSmallTall.png'
+import spriteRunLeft from '../Img/spriteRunLeft.png'
+import spriteRunRight from '../Img/spriteRunRight.png'
+import spriteStandLeft from '../Img/spriteStandLeft.png'
+import spriteStandRight from '../Img/spriteStandRight.png'
 
 const canvas = document.querySelector('#gameCanvas')
 const c = canvas.getContext('2d')
@@ -21,14 +25,38 @@ class Player {
             x: 0,
             y: 0
         }
-        this.width = 30;
-        this.height = 30;
+        this.width = 66;
+        this.height = 150;
+
+        this.image = createImage(spriteStandRight);
+        this.frames = 0;
+        this.sprites = {
+            stand: {
+                right: createImage(spriteStandRight)
+            },
+            run: {
+                right: createImage(spriteRunRight)
+            }
+        }
+        this.currentSprite = this.sprites.stand.right
     }
+
     draw(){
-        c.fillStyle = 'green '
-        c.fillRect(this.position.x, this.position.y, this.width, this.height)
+        c.drawImage(
+            this.crurrentSprite,
+            177 * this.frames,
+            0,
+            177,
+            400,
+             this.position.x, 
+             this.position.y, 
+             this.width, 
+             this.height
+             )
     }
     update() {
+        this.frames ++
+        if(this.frames > 28) this.frames = 0
         this.draw()
         this.position.x += this.velocity.x
         this.position.y += this.velocity.y
@@ -248,6 +276,7 @@ window.addEventListener('keydown', (e) => {
         case 68:
          console.log('right');
          keys.right.pressed = true
+         player.currentSprite = player.sprites.run.right
          break
         case 87:
          console.log('up');
