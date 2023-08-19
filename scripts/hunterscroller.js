@@ -2,6 +2,10 @@ import platform from '../Img/platform.png'
 import hills from '../Img/hills.png'
 import background from '../Img/background.png'
 import platformSmallTall from '../Img/platformSmallTall.png'
+import spriteRunLeft from '../Img/spriteRunLeft.png'
+import spriteRunRight from '../Img/spriteRunRight.png'
+import spriteStandLeft from '../Img/spriteStandLeft.png'
+import spriteStandRight from '../Img/spriteStandRight.png'
 
 const canvas = document.querySelector('#gameCanvas')
 const c = canvas.getContext('2d')
@@ -21,14 +25,57 @@ class Player {
             x: 0,
             y: 0
         }
-        this.width = 30;
-        this.height = 30;
+        this.width = 66;
+        this.height = 150;
+
+        this.image = createImage(spriteStandRight);
+        this.frames = 0;
+        this.sprites = {
+            stand: {
+                right: createImage(spriteStandRight),
+                left: createImage(spriteStandLeft),
+                cropWidth: 177,
+                width: 66
+            },
+            run: {
+                right: createImage(spriteRunRight),
+                left: createImage(spriteRunLeft),
+                cropWidth: 341,
+                width: 127.875
+            }
+        }
+        this.currentSprite = this.sprites.stand.right
+        this.currentCropWidth = 177
     }
+
     draw(){
-        c.fillStyle = 'green '
-        c.fillRect(this.position.x, this.position.y, this.width, this.height)
+        c.drawImage(
+            this.currentSprite,
+            this.currentCropWidth * this.frames,
+            0,
+            this.currentCropWidth,
+            400,
+             this.position.x, 
+             this.position.y, 
+             this.width, 
+             this.height
+             )
     }
     update() {
+        this.frames ++
+        if(
+            this.frames > 59 && (this.currentSprite === this.sprites.stand.right || 
+            this.currentSprite === this.sprites.stand.left
+            ))
+        
+            this.frames = 0
+        else if(
+            this.frames > 29 && (this.currentSprite === this.sprites.run.right || 
+            this.currentSprite === this.sprites.run.left 
+            ))
+         
+            this.frames = 0
+        
         this.draw()
         this.position.x += this.velocity.x
         this.position.y += this.velocity.y
@@ -79,10 +126,13 @@ return image
 
 let platformImage = createImage(platform);
 let platformSmallTallImage = createImage(platformSmallTall);
+
+
 let player = new Player ()
 let platforms = []
 let genericObjects = []
 
+let lastKey
 const keys = {
     right:{
         pressed: false
@@ -221,6 +271,37 @@ export function animate(){
         player.velocity.y = 0
     }
 })
+// Sprite switching
+if(
+    keys.right.pressed &&
+    lastKey === 'right' && player.currentSprite !== player.sprites.run.right ){
+  player.frames = 1
+  player.currentSprite = player.sprites.run.right
+  player.currentCropWidth = player.sprites.run.cropWidth
+  player.width = player.sprites.run.width  
+}else if(
+    keys.left.pressed &&
+    lastKey === 'left' && player.currentSprite !== player.sprites.run.left){
+    player.currentSprite = player.sprites.run.left
+    player.currentCropWidth = player.sprites.run.cropWidth
+    player.width = player.sprites.run.width
+}else if(
+    !keys.left.pressed &&
+    lastKey === 'left' && 
+    player.currentSprite !== player.sprites.stand.left){
+    player.currentSprite = player.sprites.stand.left
+    player.currentCropWidth = player.sprites.stand.cropWidth
+    player.width = player.sprites.stand.width
+}else if(
+    !keys.right.pressed &&
+    lastKey === 'right' && 
+    player.currentSprite !== player.sprites.stand.right){
+    player.currentSprite = player.sprites.stand.right
+    player.currentCropWidth = player.sprites.stand.cropWidth
+    player.width = player.sprites.stand.width
+}
+
+
 // win condition
  if(scrollOffset > platformImage.width *5 + 700 -2){
     console.log('You Passed the Hunter Exam');
@@ -241,6 +322,7 @@ window.addEventListener('keydown', (e) => {
         case 65:
          console.log('left');
          keys.left.pressed = true
+         lastKey = 'left'
          break
         case 83:
          console.log('down');
@@ -248,6 +330,7 @@ window.addEventListener('keydown', (e) => {
         case 68:
          console.log('right');
          keys.right.pressed = true
+         lastKey = 'right'
          break
         case 87:
          console.log('up');
@@ -263,6 +346,7 @@ window.addEventListener('keyup', (e) => {
         case 65:
          console.log('left');
          keys.left.pressed = false
+
          break
         case 83:
          console.log('down');
