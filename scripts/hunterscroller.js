@@ -334,6 +334,7 @@ window.addEventListener('keydown', (e) => {
          break
         case 87:
          console.log('up');
+         if(e.repeat) {return}
          player.velocity.y -= 14
          break     
     }
