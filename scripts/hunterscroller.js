@@ -6,7 +6,6 @@ import spriteRunLeft from "../Img/spriteRunLeft.png";
 import spriteRunRight from "../Img/spriteRunRight.png";
 import spriteStandLeft from "../Img/spriteStandLeft.png";
 import spriteStandRight from "../Img/spriteStandRight.png";
-import killuaSpriteSheet from "../Img/killua-sprite-sheet.png";
 import Killua from "./spriteSheets/Killua";
 import createImage from "./createImage";
 
@@ -33,22 +32,6 @@ class Player {
 
     this.image = createImage(spriteStandRight);
     this.frames = 0;
-    this.sprites = {
-      stand: {
-        right: createImage(killuaSpriteSheet),
-        left: createImage(spriteStandLeft),
-        cropWidth: 93,
-        width: 66,
-      },
-      run: {
-        right: createImage(spriteRunRight),
-        left: createImage(spriteRunLeft),
-        cropWidth: 341,
-        width: 127.875,
-      },
-    };
-    this.currentSprite = this.sprites.stand.right;
-    this.currentCropWidth = 177;
     this.character = Killua;
   }
 
@@ -90,7 +73,7 @@ class Player {
     )
       this.frames = 0;
     else if (
-      this.frames > 6 &&
+      this.frames > 14 &&
       (this.currentSprite === this.sprites.run.right ||
         this.currentSprite === this.sprites.run.left)
     )
@@ -280,7 +263,7 @@ export function animate() {
     player.currentSprite !== player.sprites.run.right
   ) {
     player.frames = 1;
-    player.currentSprite = player.sprites.run.right;
+    player.currentSprite = this.character.spriteSheetRight;
     player.currentCropWidth = player.sprites.run.cropWidth;
     player.width = player.sprites.run.width;
   } else if (
@@ -288,7 +271,7 @@ export function animate() {
     lastKey === "left" &&
     player.currentSprite !== player.sprites.run.left
   ) {
-    player.currentSprite = player.sprites.run.left;
+    player.currentSprite = this.character.spriteSheetLeft;
     player.currentCropWidth = player.sprites.run.cropWidth;
     player.width = player.sprites.run.width;
   } else if (
@@ -296,7 +279,7 @@ export function animate() {
     lastKey === "left" &&
     player.currentSprite !== player.sprites.stand.left
   ) {
-    player.currentSprite = player.sprites.stand.left;
+    player.currentSprite = this.character.spriteSheetLeft;
     player.currentCropWidth = player.sprites.stand.cropWidth;
     player.width = player.sprites.stand.width;
   } else if (
@@ -304,7 +287,7 @@ export function animate() {
     lastKey === "right" &&
     player.currentSprite !== player.sprites.stand.right
   ) {
-    player.currentSprite = player.sprites.stand.right;
+    player.currentSprite = this.character.spriteSheetRight;
     player.currentCropWidth = player.sprites.stand.cropWidth;
     player.width = player.sprites.stand.width;
   }
