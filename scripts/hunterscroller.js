@@ -2,9 +2,6 @@ import platform from "../Img/platform.png";
 import hills from "../Img/hills.png";
 import background from "../Img/background.png";
 import platformSmallTall from "../Img/platformSmallTall.png";
-import spriteRunLeft from "../Img/spriteRunLeft.png";
-import spriteRunRight from "../Img/spriteRunRight.png";
-import spriteStandLeft from "../Img/spriteStandLeft.png";
 import spriteStandRight from "../Img/spriteStandRight.png";
 import Killua from "./spriteSheets/Killua";
 import createImage from "./createImage";
@@ -33,6 +30,9 @@ class Player {
     this.image = createImage(spriteStandRight);
     this.frames = 0;
     this.character = Killua;
+    this.currentSprite = this.character.spriteSheetRight;
+    this.state = "idle";
+    this.direction = "right";
   }
 
   draw() {
@@ -40,7 +40,7 @@ class Player {
     const widthOffset = 60;
     const heightOffset = 14;
     c.drawImage(
-      this.character.spriteSheet,
+      this.currentSprite,
       frame.x,
       frame.y,
       this.character.positions.run.width,
@@ -67,9 +67,8 @@ class Player {
   update() {
     this.frames++;
     if (
-      this.frames > 3 &&
-      (this.currentSprite === this.sprites.stand.right ||
-        this.currentSprite === this.sprites.stand.left)
+      this.frames > this.character.frames.idle.length &&
+      this.state === "idle"
     )
       this.frames = 0;
     else if (
@@ -259,14 +258,22 @@ export function animate() {
   // Sprite switching
   if (keys.right.pressed && lastKey === "right") {
     player.frames = 1;
-    player.currentSprite = this.character.spriteSheetRight;
+
+    player.state = "run";
+    player.direction = "right";
   } else if (keys.left.pressed && lastKey === "left") {
-    player.currentSprite = this.character.spriteSheetLeft;
+    player.state = "run";
+    player.direction = "left";
   } else if (!keys.left.pressed && lastKey === "left") {
-    player.currentSprite = this.character.spriteSheetLeft;
+    player.state = "idle";
+    player.direction = "left";
   } else if (!keys.right.pressed && lastKey === "right") {
-    player.currentSprite = this.character.spriteSheetRight;
+    player.state = "idle";
+    player.direction = "right";
   }
+  player.currentSprite = player.direction = "right"
+    ? Killua.spriteSheetRight
+    : Killua.spriteSheetLeft;
 
   // win condition
   if (scrollOffset > platformImage.width * 5 + 700 - 2) {
