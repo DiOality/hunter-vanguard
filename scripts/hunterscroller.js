@@ -257,39 +257,15 @@ export function animate() {
     }
   });
   // Sprite switching
-  if (
-    keys.right.pressed &&
-    lastKey === "right" &&
-    player.currentSprite !== player.sprites.run.right
-  ) {
+  if (keys.right.pressed && lastKey === "right") {
     player.frames = 1;
     player.currentSprite = this.character.spriteSheetRight;
-    player.currentCropWidth = player.sprites.run.cropWidth;
-    player.width = player.sprites.run.width;
-  } else if (
-    keys.left.pressed &&
-    lastKey === "left" &&
-    player.currentSprite !== player.sprites.run.left
-  ) {
+  } else if (keys.left.pressed && lastKey === "left") {
     player.currentSprite = this.character.spriteSheetLeft;
-    player.currentCropWidth = player.sprites.run.cropWidth;
-    player.width = player.sprites.run.width;
-  } else if (
-    !keys.left.pressed &&
-    lastKey === "left" &&
-    player.currentSprite !== player.sprites.stand.left
-  ) {
+  } else if (!keys.left.pressed && lastKey === "left") {
     player.currentSprite = this.character.spriteSheetLeft;
-    player.currentCropWidth = player.sprites.stand.cropWidth;
-    player.width = player.sprites.stand.width;
-  } else if (
-    !keys.right.pressed &&
-    lastKey === "right" &&
-    player.currentSprite !== player.sprites.stand.right
-  ) {
+  } else if (!keys.right.pressed && lastKey === "right") {
     player.currentSprite = this.character.spriteSheetRight;
-    player.currentCropWidth = player.sprites.stand.cropWidth;
-    player.width = player.sprites.stand.width;
   }
 
   // win condition
