@@ -37,10 +37,11 @@ class Player {
   draw () {
     const frame = this.character.frames[this.state][this.frames]
     const frameW = this.character.positions[this.state].width
-    const frameX = this.direction === 'right' ? frame.x : this.character.spriteSheet.w - frame.x - frameW;
+    const frameX = this.direction === 'right' ? frame.x : this.character.spriteSheet.w - frame.x - frameW
 
     const widthOffset = 60
     const heightOffset = 14
+
     c.drawImage(
       this.currentSprite,
       frameX,
@@ -54,19 +55,27 @@ class Player {
     )
   }
 
+  frameDelay = 3
+
   update () {
-    this.frames++
-    if (
-      this.state === 'idle' && this.frames > this.character.frames.idle.length - 1
-    ) {
-      this.frames = 0
-    } else if (
-      this.state === 'run' && this.frames > this.character.frames.run.length - 1
-    ) {
-      this.frames = 0
+
+    if (this.frameDelay > 0) {
+      this.frameDelay -= 1
+      console.log('hold')
+    } else {
+      this.frames++
+      if (
+        this.state === 'idle' && this.frames > this.character.frames.idle.length - 1
+      ) {
+        this.frames = 0
+      } else if (
+        this.state === 'run' && this.frames > this.character.frames.run.length - 1
+      ) {
+        this.frames = 0
+      }
+      this.frameDelay = 3
     }
 
-    console.log(this.frames, this.character.frames.idle.length, this.character.frames.run.length)
     this.draw()
     this.position.x += this.velocity.x
     this.position.y += this.velocity.y
