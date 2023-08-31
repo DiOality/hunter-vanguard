@@ -11,7 +11,7 @@ const c = canvas.getContext("2d");
 
 canvas.width = 1024;
 canvas.height = 576;
-const debug = new Debug(true);
+const debug = new Debug(false);
 const gravity = 0.49;
 class Player {
   constructor() {
@@ -291,6 +291,10 @@ export function animate() {
       player.velocity.y = 0;
     }
   });
+
+  let oldState = player.state;
+  let oldDirection = player.direction;
+
   // Sprite switching
   if (keys.right.pressed && lastKey === "right") {
     player.state = "run";
@@ -309,6 +313,9 @@ export function animate() {
     player.direction === "right"
       ? Killua.spriteSheetRight
       : Killua.spriteSheetLeft;
+  if (oldState !== player.state || oldDirection !== player.direction) {
+    player.frames = 0;
+  }
 
   // win condition
   if (scrollOffset > platformImage.width * 5 + 700 - 2) {
