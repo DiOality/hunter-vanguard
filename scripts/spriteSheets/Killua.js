@@ -3,7 +3,9 @@ import spriteSheetLeft from "../../Img/killua-sprite-sheet-left.png";
 import createImage from "../createImage";
 
 export default {
-  spriteSheet: createImage(spriteSheetRight),
+  spriteSheet: {
+    w: 930,
+  },
   spriteSheetRight: createImage(spriteSheetRight),
   spriteSheetLeft: createImage(spriteSheetLeft),
   frames: {

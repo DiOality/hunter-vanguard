@@ -2,7 +2,7 @@ import platform from "../Img/platform.png";
 import hills from "../Img/hills.png";
 import background from "../Img/background.png";
 import platformSmallTall from "../Img/platformSmallTall.png";
-import spriteStandRight from "../Img/spriteStandRight.png";
+import Debug from "./debug";
 import Killua from "./spriteSheets/Killua";
 import createImage from "./createImage";
 
@@ -11,7 +11,7 @@ const c = canvas.getContext("2d");
 
 canvas.width = 1024;
 canvas.height = 576;
-
+const debug = new Debug(true);
 const gravity = 0.49;
 class Player {
   constructor() {
@@ -27,8 +27,8 @@ class Player {
     this.width = 66;
     this.height = 150;
 
-    this.image = createImage(spriteStandRight);
     this.frames = 0;
+
     this.character = Killua;
     this.currentSprite = this.character.spriteSheetRight;
     this.state = "idle";
@@ -36,19 +36,44 @@ class Player {
   }
 
   draw() {
-    const frame = this.character.frames.run[this.frames];
+    const frame = this.character.frames[this.state][this.frames];
+
+    const frameW = this.character.positions[this.state].width;
+
+    const frameX =
+      this.direction === "right"
+        ? frame.x
+        : this.character.spriteSheet.w - frame.x - frameW;
+
     const widthOffset = 60;
     const heightOffset = 14;
+    if (debug.showDebug) {
+      c.fillStyle = "rgba(225,225,225,0.5)";
+      c.fillRect(
+        this.position.x + widthOffset,
+        this.position.y + heightOffset,
+        this.character.positions[this.state].width * 2,
+        this.character.positions[this.state].height * 2
+      );
+      c.fillStyle = "rgba(173,255,47,0.5)";
+      c.fillRect(
+        this.position.x + widthOffset,
+        this.position.y + heightOffset,
+        this.width + player.position.x,
+        this.height + player.position.y
+      );
+    }
+
     c.drawImage(
       this.currentSprite,
-      frame.x,
+      frameX,
       frame.y,
-      this.character.positions.run.width,
-      this.character.positions.run.height,
+      frameW,
+      this.character.positions[this.state].height,
       this.position.x + widthOffset,
       this.position.y + heightOffset,
-      this.character.positions.run.width * 2,
-      this.character.positions.run.height * 2
+      this.character.positions[this.state].width * 2,
+      this.character.positions[this.state].height * 2
     );
 
     //  c.drawImage(
@@ -64,26 +89,34 @@ class Player {
     //      )
   }
 
+  frameDelay = 30;
+
   update() {
-    this.frames++;
-    if (
-      this.frames > this.character.frames.idle.length &&
-      this.state === "idle"
-    )
-      this.frames = 0;
-    else if (
-      this.frames > 14 &&
-      (this.currentSprite === this.sprites.run.right ||
-        this.currentSprite === this.sprites.run.left)
-    )
-      this.frames = 0;
+    if (this.frameDelay > 0) {
+      this.frameDelay -= 1;
+    } else {
+      this.frames++;
+      if (
+        this.state === "idle" &&
+        this.frames > this.character.frames.idle.length - 1
+      ) {
+        this.frames = 0;
+      } else if (
+        this.state === "run" &&
+        this.frames > this.character.frames.run.length - 1
+      ) {
+        this.frames = 0;
+      }
+      this.frameDelay = 30;
+    }
 
     this.draw();
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
 
-    if (this.position.y + this.height + this.velocity.y <= canvas.height)
+    if (this.position.y + this.height + this.velocity.y <= canvas.height) {
       this.velocity.y += gravity;
+    }
   }
 }
 
@@ -214,6 +247,9 @@ export function animate() {
   });
   player.update();
 
+  debug.update();
+  debug.draw();
+
   if (keys.right.pressed && player.position.x < 400) {
     player.velocity.x = player.speed;
   } else if (
@@ -257,8 +293,6 @@ export function animate() {
   });
   // Sprite switching
   if (keys.right.pressed && lastKey === "right") {
-    player.frames = 1;
-
     player.state = "run";
     player.direction = "right";
   } else if (keys.left.pressed && lastKey === "left") {
@@ -271,9 +305,10 @@ export function animate() {
     player.state = "idle";
     player.direction = "right";
   }
-  player.currentSprite = player.direction = "right"
-    ? Killua.spriteSheetRight
-    : Killua.spriteSheetLeft;
+  player.currentSprite =
+    player.direction === "right"
+      ? Killua.spriteSheetRight
+      : Killua.spriteSheetLeft;
 
   // win condition
   if (scrollOffset > platformImage.width * 5 + 700 - 2) {
