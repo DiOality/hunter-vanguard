@@ -1,130 +1,122 @@
-import platform from "../Img/platform.png";
-import hills from "../Img/hills.png";
-import background from "../Img/background.png";
-import platformSmallTall from "../Img/platformSmallTall.png";
-import spriteStandRight from "../Img/spriteStandRight.png";
-import Killua from "./spriteSheets/Killua";
-import createImage from "./createImage";
+import platform from '../Img/platform.png'
+import hills from '../Img/hills.png'
+import background from '../Img/background.png'
+import platformSmallTall from '../Img/platformSmallTall.png'
+import Killua from './spriteSheets/Killua'
+import createImage from './createImage'
 
-const canvas = document.querySelector("#gameCanvas");
-const c = canvas.getContext("2d");
+const canvas = document.querySelector('#gameCanvas')
+const c = canvas.getContext('2d')
 
-canvas.width = 1024;
-canvas.height = 576;
+canvas.width = 1024
+canvas.height = 576
 
-const gravity = 0.49;
+const gravity = 0.49
+
 class Player {
-  constructor() {
-    this.speed = 7;
+  constructor () {
+    this.speed = 7
     this.position = {
       x: 100,
       y: 100,
-    };
+    }
     this.velocity = {
       x: 0,
       y: 0,
-    };
-    this.width = 66;
-    this.height = 150;
+    }
+    this.width = 66
+    this.height = 150
 
-    this.image = createImage(spriteStandRight);
-    this.frames = 0;
-    this.character = Killua;
-    this.currentSprite = this.character.spriteSheetRight;
-    this.state = "idle";
-    this.direction = "right";
+    this.frames = 0
+    this.character = Killua
+    this.currentSprite = this.character.spriteSheetRight
+    this.state = 'idle'
+    this.direction = 'right'
   }
 
-  draw() {
-    const frame = this.character.frames.run[this.frames];
-    const widthOffset = 60;
-    const heightOffset = 14;
+  draw () {
+    const frame = this.character.frames[this.state][this.frames]
+    const frameW = this.character.positions[this.state].width
+    const frameX = this.direction === 'right' ? frame.x : this.character.spriteSheet.w - frame.x - frameW;
+
+    const widthOffset = 60
+    const heightOffset = 14
     c.drawImage(
       this.currentSprite,
-      frame.x,
+      frameX,
       frame.y,
-      this.character.positions.run.width,
-      this.character.positions.run.height,
+      frameW,
+      this.character.positions[this.state].height,
       this.position.x + widthOffset,
       this.position.y + heightOffset,
-      this.character.positions.run.width * 2,
-      this.character.positions.run.height * 2
-    );
-
-    //  c.drawImage(
-    //     this.currentSprite,
-    //     this.currentCropWidth * this.frames,
-    //     0,
-    //     this.currentCropWidth,
-    //     400,
-    //      this.position.x,
-    //      this.position.y,
-    //      this.width,
-    //      this.height
-    //      )
+      this.character.positions[this.state].width * 2,
+      this.character.positions[this.state].height * 2
+    )
   }
 
-  update() {
-    this.frames++;
+  update () {
+    this.frames++
     if (
-      this.frames > this.character.frames.idle.length &&
-      this.state === "idle"
-    )
-      this.frames = 0;
-    else if (
-      this.frames > 14 &&
-      (this.currentSprite === this.sprites.run.right ||
-        this.currentSprite === this.sprites.run.left)
-    )
-      this.frames = 0;
+      this.state === 'idle' && this.frames > this.character.frames.idle.length - 1
+    ) {
+      this.frames = 0
+    } else if (
+      this.state === 'run' && this.frames > this.character.frames.run.length - 1
+    ) {
+      this.frames = 0
+    }
 
-    this.draw();
-    this.position.x += this.velocity.x;
-    this.position.y += this.velocity.y;
+    console.log(this.frames, this.character.frames.idle.length, this.character.frames.run.length)
+    this.draw()
+    this.position.x += this.velocity.x
+    this.position.y += this.velocity.y
 
-    if (this.position.y + this.height + this.velocity.y <= canvas.height)
-      this.velocity.y += gravity;
+    if (this.position.y + this.height + this.velocity.y <= canvas.height) {
+      // this.velocity.y += gravity
+    }
   }
 }
 
 class Platform {
-  constructor({ x, y, image }) {
+  constructor ({x, y, image}) {
     this.position = {
       x: x,
       y: y,
-    };
-    this.image = image;
-    this.width = image.width;
-    this.height = image.height;
+    }
+    this.image = image
+    this.width = image.width
+    this.height = image.height
   }
-  draw() {
-    c.drawImage(this.image, this.position.x, this.position.y);
+
+  draw () {
+    c.drawImage(this.image, this.position.x, this.position.y)
   }
 }
 
 class GenericObject {
-  constructor({ x, y, image }) {
+  constructor ({x, y, image}) {
     this.position = {
       x: x,
       y: y,
-    };
-    this.image = image;
-    this.width = image.width;
-    this.height = image.height;
+    }
+    this.image = image
+    this.width = image.width
+    this.height = image.height
   }
-  draw() {
-    c.drawImage(this.image, this.position.x, this.position.y);
+
+  draw () {
+    c.drawImage(this.image, this.position.x, this.position.y)
   }
 }
 
-let platformImage = createImage(platform);
-let platformSmallTallImage = createImage(platformSmallTall);
+let platformImage = createImage(platform)
+let platformSmallTallImage = createImage(platformSmallTall)
 
-let player = new Player();
-let platforms = [];
-let genericObjects = [];
+let player = new Player()
+let platforms = []
+let genericObjects = []
 
-let lastKey;
+let lastKey
 const keys = {
   right: {
     pressed: false,
@@ -132,14 +124,14 @@ const keys = {
   left: {
     pressed: false,
   },
-};
+}
 
-let scrollOffset = 0;
+let scrollOffset = 0
 
-function init() {
-  platformImage = createImage(platform);
+function init () {
+  platformImage = createImage(platform)
 
-  player = new Player();
+  player = new Player()
   platforms = [
     new Platform({
       x:
@@ -182,7 +174,7 @@ function init() {
       y: 470,
       image: platformImage,
     }),
-  ];
+  ]
 
   genericObjects = [
     new GenericObject({
@@ -195,51 +187,51 @@ function init() {
       y: -1,
       image: createImage(hills),
     }),
-  ];
+  ]
 
-  scrollOffset = 0;
+  scrollOffset = 0
 }
 
-export function animate() {
-  requestAnimationFrame(animate);
-  c.fillStyle = "white";
-  c.clearRect(0, 0, canvas.width, canvas.height);
+export function animate () {
+  requestAnimationFrame(animate)
+  c.fillStyle = 'white'
+  c.clearRect(0, 0, canvas.width, canvas.height)
 
   genericObjects.forEach((genericObject) => {
-    genericObject.draw();
-  });
+    genericObject.draw()
+  })
 
   platforms.forEach((platform) => {
-    platform.draw();
-  });
-  player.update();
+    platform.draw()
+  })
+  player.update()
 
   if (keys.right.pressed && player.position.x < 400) {
-    player.velocity.x = player.speed;
+    player.velocity.x = player.speed
   } else if (
     (keys.left.pressed && player.position.x > 100) ||
     (keys.left.pressed && scrollOffset === 0 && player.position.x > 0)
   ) {
-    player.velocity.x = -player.speed;
+    player.velocity.x = -player.speed
   } else {
-    player.velocity.x = 0;
+    player.velocity.x = 0
 
     if (keys.right.pressed) {
-      scrollOffset += player.speed;
+      scrollOffset += player.speed
       platforms.forEach((platform) => {
-        platform.position.x -= player.speed;
-      });
+        platform.position.x -= player.speed
+      })
       genericObjects.forEach((genericObject) => {
-        genericObject.position.x -= player.speed * 0.66;
-      });
+        genericObject.position.x -= player.speed * 0.66
+      })
     } else if (keys.left.pressed && scrollOffset > 0) {
-      scrollOffset -= player.speed;
+      scrollOffset -= player.speed
       platforms.forEach((platform) => {
-        platform.position.x += player.speed;
-      });
+        platform.position.x += player.speed
+      })
       genericObjects.forEach((genericObject) => {
-        genericObject.position.x += player.speed * 0.66;
-      });
+        genericObject.position.x += player.speed * 0.66
+      })
     }
   }
 
@@ -248,77 +240,75 @@ export function animate() {
     if (
       player.position.y + player.height <= platform.position.y &&
       player.position.y + player.height + player.velocity.y >=
-        platform.position.y &&
+      platform.position.y &&
       player.position.x + player.width >= platform.position.x &&
       player.position.x <= platform.position.x + platform.width
     ) {
-      player.velocity.y = 0;
+      player.velocity.y = 0
     }
-  });
-  // Sprite switching
-  if (keys.right.pressed && lastKey === "right") {
-    player.frames = 1;
+  })
 
-    player.state = "run";
-    player.direction = "right";
-  } else if (keys.left.pressed && lastKey === "left") {
-    player.state = "run";
-    player.direction = "left";
-  } else if (!keys.left.pressed && lastKey === "left") {
-    player.state = "idle";
-    player.direction = "left";
-  } else if (!keys.right.pressed && lastKey === "right") {
-    player.state = "idle";
-    player.direction = "right";
+  // Sprite switching
+  if (keys.right.pressed && lastKey === 'right') {
+    player.state = 'run'
+    player.direction = 'right'
+  } else if (keys.left.pressed && lastKey === 'left') {
+    player.state = 'run'
+    player.direction = 'left'
+  } else if (!keys.left.pressed && lastKey === 'left') {
+    player.state = 'idle'
+    player.direction = 'left'
+  } else if (!keys.right.pressed && lastKey === 'right') {
+    player.state = 'idle'
+    player.direction = 'right'
   }
-  player.currentSprite = player.direction = "right"
+  player.currentSprite = player.direction === 'right'
     ? Killua.spriteSheetRight
-    : Killua.spriteSheetLeft;
+    : Killua.spriteSheetLeft
 
   // win condition
   if (scrollOffset > platformImage.width * 5 + 700 - 2) {
-    console.log("You Passed the Hunter Exam");
+    console.log('You Passed the Hunter Exam')
   }
   // lose condition
   if (player.position.y > canvas.height) {
-    init();
-    console.log("You have failed");
+    init()
+    console.log('You have failed')
   }
 }
 
-// change the instance into key from e after you have it working.
-window.addEventListener("keydown", (e) => {
+window.addEventListener('keydown', (e) => {
   switch (e.key) {
-    case "a":
-      keys.left.pressed = true;
-      lastKey = "left";
-      break;
-    case "s":
-      break;
-    case "d":
-      keys.right.pressed = true;
-      lastKey = "right";
-      break;
-    case "w":
+    case 'a':
+      keys.left.pressed = true
+      lastKey = 'left'
+      break
+    case 's':
+      break
+    case 'd':
+      keys.right.pressed = true
+      lastKey = 'right'
+      break
+    case 'w':
       if (e.repeat) {
-        return;
+        return
       }
-      player.velocity.y -= 14;
-      break;
+      player.velocity.y -= 14
+      break
   }
-});
+})
 
-window.addEventListener("keyup", (e) => {
+window.addEventListener('keyup', (e) => {
   switch (e.key) {
-    case "a":
-      keys.left.pressed = false;
-      break;
-    case "s":
-      break;
-    case "d":
-      keys.right.pressed = false;
-      break;
-    case "w":
-      break;
+    case 'a':
+      keys.left.pressed = false
+      break
+    case 's':
+      break
+    case 'd':
+      keys.right.pressed = false
+      break
+    case 'w':
+      break
   }
-});
+})
