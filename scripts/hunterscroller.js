@@ -48,21 +48,6 @@ class Player {
 
     const widthOffset = 60
     const heightOffset = 14
-    if (debug.showDebug) {
-      debug.playerBox = {
-        x: this.position.x,
-        y: this.position.y,
-        w: this.character.positions[this.state].width * 2,
-        h: this.character.positions[this.state].height * 2
-      }
-
-      debug.frameBox = {
-        x: this.position.x + widthOffset,
-        y: this.position.y + heightOffset,
-        w: this.character.positions[this.state].width * 2,
-        h: this.character.positions[this.state].height * 2
-      }
-    }
 
     c.drawImage(
       this.currentSprite,
@@ -77,73 +62,75 @@ class Player {
     )
   }
 
-  frameDelay = 30;
+  frameDelay = 30
 
-  update() {
+  update () {
     if (this.frameDelay > 0) {
-      this.frameDelay -= 1;
+      this.frameDelay -= 1
     } else {
-      this.frames++;
+      this.frames++
       if (
-        this.state === "idle" &&
+        this.state === 'idle' &&
         this.frames > this.character.frames.idle.length - 1
       ) {
-        this.frames = 0;
+        this.frames = 0
       } else if (
-        this.state === "run" &&
+        this.state === 'run' &&
         this.frames > this.character.frames.run.length - 1
       ) {
-        this.frames = 0;
+        this.frames = 0
       }
-      this.frameDelay = 30;
+      this.frameDelay = 30
     }
 
-    this.draw();
-    this.position.x += this.velocity.x;
-    this.position.y += this.velocity.y;
+    this.draw()
+    this.position.x += this.velocity.x
+    this.position.y += this.velocity.y
 
     if (this.position.y + this.height + this.velocity.y <= canvas.height) {
-      this.velocity.y += gravity;
+      this.velocity.y += gravity
     }
   }
 }
 
 class Platform {
-  constructor({ x, y, image }) {
+  constructor ({x, y, image}) {
     this.position = {
       x: x,
       y: y,
-    };
-    this.image = image;
-    this.width = image.width;
-    this.height = image.height;
+    }
+    this.image = image
+    this.width = image.width
+    this.height = image.height
   }
-  draw() {
-    c.drawImage(this.image, this.position.x, this.position.y);
+
+  draw () {
+    c.drawImage(this.image, this.position.x, this.position.y)
   }
 }
 
 class GenericObject {
-  constructor({ x, y, image }) {
+  constructor ({x, y, image}) {
     this.position = {
       x: x,
       y: y,
-    };
-    this.image = image;
-    this.width = image.width;
-    this.height = image.height;
+    }
+    this.image = image
+    this.width = image.width
+    this.height = image.height
   }
-  draw() {
-    c.drawImage(this.image, this.position.x, this.position.y);
+
+  draw () {
+    c.drawImage(this.image, this.position.x, this.position.y)
   }
 }
 
-let platformImage = createImage(platform);
-let platformSmallTallImage = createImage(platformSmallTall);
+let platformImage = createImage(platform)
+let platformSmallTallImage = createImage(platformSmallTall)
 
-let player = new Player();
-let platforms = [];
-let genericObjects = [];
+let player = new Player()
+let platforms = []
+let genericObjects = []
 
 let lastKey
 const keys = {
@@ -153,14 +140,14 @@ const keys = {
   left: {
     pressed: false,
   },
-};
+}
 
-let scrollOffset = 0;
+let scrollOffset = 0
 
-function init() {
-  platformImage = createImage(platform);
+function init () {
+  platformImage = createImage(platform)
 
-  player = new Player();
+  player = new Player()
   platforms = [
     new Platform({
       x:
@@ -264,26 +251,8 @@ export function animate () {
     }
   }
 
-  if (debug.showDebug) {
-    debug.platforms = platforms.map((platform) => {
-      return {
-        x: platform.position.x,
-        y: platform.position.y,
-        w: platform.width,
-        h: platform.height
-      }
-    })
-  }
-
   // platform collision detection
   platforms.forEach((platform) => {
-
-    debug.hitBox = {
-      x: player.position.x,
-      y: player.position.y,
-      w: player.width,
-      h: player.height,
-    }
 
     if (
       player.position.y + player.height <= platform.position.y &&
@@ -331,7 +300,8 @@ export function animate () {
     console.log('You have failed')
   }
 
-  debug.update()
+  debug.updatePlayer(player)
+  debug.updatePlatforms(platforms)
   debug.draw(c)
 }
 

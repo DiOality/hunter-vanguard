@@ -14,20 +14,60 @@ export default class Debug {
     this.showDebug = showDebug
   }
 
-  update () {
-    if (!this.showDebug) {
+  updatePlayer (player) {
+    if (!this.showDebug || !player) {
       return
+    }
+
+    // TODO this need to be in the player class because it is duplicated
+    const widthOffset = 60
+    const heightOffset = 14
+
+    this.playerBox = {
+      x: player.position.x,
+      y: player.position.y,
+      w: player.character.positions[player.state].width * 2,
+      h: player.character.positions[player.state].height * 2
+    }
+
+    this.frameBox = {
+      x: player.position.x + widthOffset,
+      y: player.position.y + heightOffset,
+      w: player.character.positions[player.state].width * 2,
+      h: player.character.positions[player.state].height * 2
+    }
+
+    this.hitBox = {
+      x: player.position.x,
+      y: player.position.y,
+      w: player.width,
+      h: player.height,
     }
   }
 
-  draw (c) {
-    if (!this.showDebug) {
+  updatePlatforms (platforms) {
+    if (!this.showDebug || !platforms) {
       return
     }
-    drawFrameBox(c, this.frameBox)
-    drawHitBox(c, this.hitBox)
-    drawPlayerBox(c, this.playerBox)
-    this.platforms.forEach(platform => drawPlatformBox(c, platform))
+
+    this.platforms = platforms.map((platform) => {
+      return {
+        x: platform.position.x,
+        y: platform.position.y,
+        w: platform.width,
+        h: platform.height
+      }
+    })
+  }
+
+  draw (ctx) {
+    if (!this.showDebug || !ctx) {
+      return
+    }
+    drawFrameBox(ctx, this.frameBox)
+    drawHitBox(ctx, this.hitBox)
+    drawPlayerBox(ctx, this.playerBox)
+    this.platforms.forEach(platform => drawPlatformBox(ctx, platform))
   }
 }
 

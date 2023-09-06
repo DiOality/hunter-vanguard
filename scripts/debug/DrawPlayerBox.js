@@ -6,7 +6,7 @@ export default function drawPlayerBox (ctx, box) {
   }
 
   const colour = 'purple'
-  const name = 'Frame'
+  const name = 'Player'
 
   drawDebugBox(ctx, box, colour, name)
 }
