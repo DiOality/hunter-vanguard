@@ -1,67 +1,67 @@
-import platform from "../Img/platform.png";
-import hills from "../Img/hills.png";
-import background from "../Img/background.png";
-import platformSmallTall from "../Img/platformSmallTall.png";
-import Debug from "./debug";
-import Killua from "./spriteSheets/Killua";
-import createImage from "./createImage";
+import platform from '../Img/platform.png'
+import hills from '../Img/hills.png'
+import background from '../Img/background.png'
+import platformSmallTall from '../Img/platformSmallTall.png'
+import Debug from './debug/Debug.js'
+import Killua from './spriteSheets/Killua'
+import createImage from './createImage'
 
-const canvas = document.querySelector("#gameCanvas");
-const c = canvas.getContext("2d");
+const canvas = document.querySelector('#gameCanvas')
+const c = canvas.getContext('2d')
 
-canvas.width = 1024;
-canvas.height = 576;
-const debug = new Debug(false);
-const gravity = 0.49;
+canvas.width = 1024
+canvas.height = 576
+const debug = new Debug(true)
+const gravity = 0.49
+
 class Player {
-  constructor() {
-    this.speed = 7;
+  constructor () {
+    this.speed = 7
     this.position = {
       x: 100,
       y: 100,
-    };
+    }
     this.velocity = {
       x: 0,
       y: 0,
-    };
-    this.width = 66;
-    this.height = 150;
+    }
+    this.width = 66
+    this.height = 150
 
-    this.frames = 0;
+    this.frames = 0
 
-    this.character = Killua;
-    this.currentSprite = this.character.spriteSheetRight;
-    this.state = "idle";
-    this.direction = "right";
+    this.character = Killua
+    this.currentSprite = this.character.spriteSheetRight
+    this.state = 'idle'
+    this.direction = 'right'
   }
 
-  draw() {
-    const frame = this.character.frames[this.state][this.frames];
+  draw () {
+    const frame = this.character.frames[this.state][this.frames]
 
-    const frameW = this.character.positions[this.state].width;
+    const frameW = this.character.positions[this.state].width
 
     const frameX =
-      this.direction === "right"
+      this.direction === 'right'
         ? frame.x
-        : this.character.spriteSheet.w - frame.x - frameW;
+        : this.character.spriteSheet.w - frame.x - frameW
 
-    const widthOffset = 60;
-    const heightOffset = 14;
+    const widthOffset = 60
+    const heightOffset = 14
     if (debug.showDebug) {
-      c.fillStyle = "rgba(225,225,225,0.5)";
-      c.fillRect(
-        this.position.x + widthOffset,
-        this.position.y + heightOffset,
-        this.character.positions[this.state].width * 2,
-        this.character.positions[this.state].height * 2
-      );
-      c.fillStyle = "rgba(173,255,47,0.5)";
-      c.fillRect(
-        this.position.x + widthOffset,
-        this.position.y + heightOffset,
-        this.width + player.position.x,
-        this.height + player.position.y
-      );
+      debug.playerBox = {
+        x: this.position.x,
+        y: this.position.y,
+        w: this.character.positions[this.state].width * 2,
+        h: this.character.positions[this.state].height * 2
+      }
+
+      debug.frameBox = {
+        x: this.position.x + widthOffset,
+        y: this.position.y + heightOffset,
+        w: this.character.positions[this.state].width * 2,
+        h: this.character.positions[this.state].height * 2
+      }
     }
 
     c.drawImage(
@@ -74,19 +74,7 @@ class Player {
       this.position.y + heightOffset,
       this.character.positions[this.state].width * 2,
       this.character.positions[this.state].height * 2
-    );
-
-    //  c.drawImage(
-    //     this.currentSprite,
-    //     this.currentCropWidth * this.frames,
-    //     0,
-    //     this.currentCropWidth,
-    //     400,
-    //      this.position.x,
-    //      this.position.y,
-    //      this.width,
-    //      this.height
-    //      )
+    )
   }
 
   frameDelay = 30;
@@ -157,7 +145,7 @@ let player = new Player();
 let platforms = [];
 let genericObjects = [];
 
-let lastKey;
+let lastKey
 const keys = {
   right: {
     pressed: false,
@@ -215,7 +203,7 @@ function init() {
       y: 470,
       image: platformImage,
     }),
-  ];
+  ]
 
   genericObjects = [
     new GenericObject({
@@ -228,139 +216,159 @@ function init() {
       y: -1,
       image: createImage(hills),
     }),
-  ];
+  ]
 
-  scrollOffset = 0;
+  scrollOffset = 0
 }
 
-export function animate() {
-  requestAnimationFrame(animate);
-  c.fillStyle = "white";
-  c.clearRect(0, 0, canvas.width, canvas.height);
+export function animate () {
+  requestAnimationFrame(animate)
+  c.fillStyle = 'white'
+  c.clearRect(0, 0, canvas.width, canvas.height)
 
   genericObjects.forEach((genericObject) => {
-    genericObject.draw();
-  });
+    genericObject.draw()
+  })
 
   platforms.forEach((platform) => {
-    platform.draw();
-  });
-  player.update();
-
-  debug.update();
-  debug.draw();
+    platform.draw()
+  })
+  player.update()
 
   if (keys.right.pressed && player.position.x < 400) {
-    player.velocity.x = player.speed;
+    player.velocity.x = player.speed
   } else if (
     (keys.left.pressed && player.position.x > 100) ||
     (keys.left.pressed && scrollOffset === 0 && player.position.x > 0)
   ) {
-    player.velocity.x = -player.speed;
+    player.velocity.x = -player.speed
   } else {
-    player.velocity.x = 0;
+    player.velocity.x = 0
 
     if (keys.right.pressed) {
-      scrollOffset += player.speed;
+      scrollOffset += player.speed
       platforms.forEach((platform) => {
-        platform.position.x -= player.speed;
-      });
+        platform.position.x -= player.speed
+      })
       genericObjects.forEach((genericObject) => {
-        genericObject.position.x -= player.speed * 0.66;
-      });
+        genericObject.position.x -= player.speed * 0.66
+      })
     } else if (keys.left.pressed && scrollOffset > 0) {
-      scrollOffset -= player.speed;
+      scrollOffset -= player.speed
       platforms.forEach((platform) => {
-        platform.position.x += player.speed;
-      });
+        platform.position.x += player.speed
+      })
       genericObjects.forEach((genericObject) => {
-        genericObject.position.x += player.speed * 0.66;
-      });
+        genericObject.position.x += player.speed * 0.66
+      })
     }
+  }
+
+  if (debug.showDebug) {
+    debug.platforms = platforms.map((platform) => {
+      return {
+        x: platform.position.x,
+        y: platform.position.y,
+        w: platform.width,
+        h: platform.height
+      }
+    })
   }
 
   // platform collision detection
   platforms.forEach((platform) => {
+
+    debug.hitBox = {
+      x: player.position.x,
+      y: player.position.y,
+      w: player.width,
+      h: player.height,
+    }
+
     if (
       player.position.y + player.height <= platform.position.y &&
       player.position.y + player.height + player.velocity.y >=
-        platform.position.y &&
+      platform.position.y &&
       player.position.x + player.width >= platform.position.x &&
       player.position.x <= platform.position.x + platform.width
     ) {
-      player.velocity.y = 0;
+      player.velocity.y = 0
     }
-  });
+  })
 
-  let oldState = player.state;
-  let oldDirection = player.direction;
+  let oldState = player.state
+  let oldDirection = player.direction
 
   // Sprite switching
-  if (keys.right.pressed && lastKey === "right") {
-    player.state = "run";
-    player.direction = "right";
-  } else if (keys.left.pressed && lastKey === "left") {
-    player.state = "run";
-    player.direction = "left";
-  } else if (!keys.left.pressed && lastKey === "left") {
-    player.state = "idle";
-    player.direction = "left";
-  } else if (!keys.right.pressed && lastKey === "right") {
-    player.state = "idle";
-    player.direction = "right";
+  if (keys.right.pressed && lastKey === 'right') {
+    player.state = 'run'
+    player.direction = 'right'
+  } else if (keys.left.pressed && lastKey === 'left') {
+    player.state = 'run'
+    player.direction = 'left'
+  } else if (!keys.left.pressed && lastKey === 'left') {
+    player.state = 'idle'
+    player.direction = 'left'
+  } else if (!keys.right.pressed && lastKey === 'right') {
+    player.state = 'idle'
+    player.direction = 'right'
   }
   player.currentSprite =
-    player.direction === "right"
+    player.direction === 'right'
       ? Killua.spriteSheetRight
-      : Killua.spriteSheetLeft;
+      : Killua.spriteSheetLeft
   if (oldState !== player.state || oldDirection !== player.direction) {
-    player.frames = 0;
+    player.frames = 0
   }
 
   // win condition
   if (scrollOffset > platformImage.width * 5 + 700 - 2) {
-    console.log("You Passed the Hunter Exam");
+    console.log('You Passed the Hunter Exam')
   }
   // lose condition
   if (player.position.y > canvas.height) {
-    init();
-    console.log("You have failed");
+    init()
+    console.log('You have failed')
   }
+
+  debug.update()
+  debug.draw(c)
 }
 
 // change the instance into key from e after you have it working.
-window.addEventListener("keydown", (e) => {
+window.addEventListener('keydown', (e) => {
   switch (e.key) {
-    case "a":
-      keys.left.pressed = true;
-      lastKey = "left";
-      break;
-    case "s":
-      break;
-    case "d":
-      keys.right.pressed = true;
-      lastKey = "right";
-      break;
-    case "w":
+    case 'a':
+      keys.left.pressed = true
+      lastKey = 'left'
+      break
+    case 's':
+      break
+    case 'd':
+      keys.right.pressed = true
+      lastKey = 'right'
+      break
+    case 'w':
       if (e.repeat) {
-        return;
+        return
       }
-      player.velocity.y -= 14;
-      break;
+      player.velocity.y -= 14
+      break
   }
-});
+})
 
-window.addEventListener("keyup", (e) => {
+window.addEventListener('keyup', (e) => {
   switch (e.key) {
-    case "a":
-      keys.left.pressed = false;
-      break;
-    case "s":
-      break;
-    case "d":
-      keys.right.pressed = false;
-      break;
-    case "w":
-      break;
+    case 'a':
+      keys.left.pressed = false
+      break
+    case 's':
+      break
+    case 'd':
+      keys.right.pressed = false
+      break
+    case 'w':
+      break
   }
-});
+})
+
