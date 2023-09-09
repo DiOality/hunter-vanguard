@@ -14,18 +14,20 @@ canvas.height = 576;
 const debug = new Debug(true);
 const gravity = 0.49;
 
+// hitbox
 class Player {
   constructor() {
     this.speed = 7;
     this.position = {
-      x: 100,
+      x: 400,
       y: 100,
     };
     this.velocity = {
       x: 0,
       y: 0,
     };
-    this.width = 66;
+    // hitbox
+    this.width = 40;
     this.height = 100;
 
     this.frames = 0;
@@ -37,25 +39,35 @@ class Player {
   }
 
   draw() {
+    // this is the frames of the spritesheet based on teh current state
     const frame = this.character.frames[this.state][this.frames];
-
+    // this is the width it is cutting out of the spritesheet and showing
     const frameW = this.character.positions[this.state].width;
-
+    // This is an algorithm to flip the spritesheet and cut a reversed sheet of it if it is not going right
     const frameX =
       this.direction === "right"
         ? frame.x
         : this.character.spriteSheet.w - frame.x - frameW;
 
+    let positionXDrawImageOffset = 2;
+    if (this.direction === "right" && this.state === "idle") {
+      positionXDrawImageOffset = 10;
+    }
     c.drawImage(
       this.currentSprite,
       frameX,
       frame.y,
       frameW,
       this.character.positions[this.state].height,
-      this.position.x,
+      this.position.x - positionXDrawImageOffset,
       this.position.y,
-      this.character.positions[this.state].width * 2,
-      this.character.positions[this.state].height * 2
+      this.character.positions[this.state].width * this.character.zoom,
+      this.character.positions[this.state].height * this.character.zoom
+    );
+    console.log(
+      this.direction,
+      this.state,
+      this.character.positions[this.state].width * this.character.zoom
     );
   }
 

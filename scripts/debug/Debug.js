@@ -20,18 +20,24 @@ export default class Debug {
 
     // TODO this need to be in the player class because it is duplicated
 
-    this.playerBox = {
-      x: player.position.x,
-      y: player.position.y,
-      w: player.character.positions[player.state].width * 2,
-      h: player.character.positions[player.state].height * 2,
-    };
+    // this.playerBox = {
+    //   x: player.position.x,
+    //   y: player.position.y,
+    //   w: player.character.positions[player.state].width * player.character.zoom,
+    //   h:
+    //     player.character.positions[player.state].height * player.character.zoom,
+    // };
+    let positionXDrawImageOffset = 2;
+    if (player.direction === "right" && this.state === "idle") {
+      positionXDrawImageOffset = 10;
+    }
 
     this.frameBox = {
-      x: player.position.x,
+      x: player.position.x - positionXDrawImageOffset,
       y: player.position.y,
-      w: player.character.positions[player.state].width * 2,
-      h: player.character.positions[player.state].height * 2,
+      w: player.character.positions[player.state].width * player.character.zoom,
+      h:
+        player.character.positions[player.state].height * player.character.zoom,
     };
 
     this.hitBox = {

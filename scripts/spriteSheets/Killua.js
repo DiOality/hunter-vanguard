@@ -3,6 +3,7 @@ import spriteSheetLeft from "../../Img/killua-sprite-sheet-left.png";
 import createImage from "../createImage";
 
 export default {
+  zoom: 2,
   spriteSheet: {
     w: 930,
   },
@@ -26,16 +27,15 @@ export default {
       { x: 93 + 20, y: 100 },
     ],
   },
+  // the cut of the frame spritesheet
   positions: {
     idle: {
-      heightOffset: 14,
-      width: 93,
-      height: 70,
+      width: 25,
+      height: 50,
     },
     run: {
-      heightOffset: 14,
-      width: 93,
-      height: 70,
+      width: 40,
+      height: 50,
     },
   },
 };
