@@ -1,6 +1,4 @@
-import { animate } from './scripts/hunterscroller'
-import './style.css'
+import { animate } from "./scripts/hunterscroller";
+import "./style.css";
 
-animate()
-
-
+animate();

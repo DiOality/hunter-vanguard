@@ -2,9 +2,9 @@ import platform from "../Img/platform.png";
 import hills from "../Img/hills.png";
 import background from "../Img/background.png";
 import platformSmallTall from "../Img/platformSmallTall.png";
-import Debug from "./Debug";
 import Killua from "./spriteSheets/Killua";
 import createImage from "./createImage";
+import Debug from './debug/Debug'
 
 const canvas = document.querySelector("#gameCanvas");
 const c = canvas.getContext("2d");
@@ -13,19 +13,22 @@ canvas.width = 1024;
 canvas.height = 576;
 const debug = new Debug(false);
 const gravity = 0.49;
+
+// hitbox
 class Player {
   constructor() {
     this.speed = 7;
     this.position = {
-      x: 100,
+      x: 400,
       y: 100,
     };
     this.velocity = {
       x: 0,
       y: 0,
     };
-    this.width = 66;
-    this.height = 150;
+    // hitbox
+    this.width = 40;
+    this.height = 100;
 
     this.frames = 0;
 
@@ -36,57 +39,36 @@ class Player {
   }
 
   draw() {
+    // this is the frames of the spritesheet based on teh current state
     const frame = this.character.frames[this.state][this.frames];
-
+    // this is the width it is cutting out of the spritesheet and showing
     const frameW = this.character.positions[this.state].width;
-
+    // This is an algorithm to flip the spritesheet and cut a reversed sheet of it if it is not going right
     const frameX =
       this.direction === "right"
         ? frame.x
         : this.character.spriteSheet.w - frame.x - frameW;
 
-    const widthOffset = 60;
-    const heightOffset = 14;
-    if (debug.showDebug) {
-      c.fillStyle = "rgba(225,225,225,0.5)";
-      c.fillRect(
-        this.position.x + widthOffset,
-        this.position.y + heightOffset,
-        this.character.positions[this.state].width * 2,
-        this.character.positions[this.state].height * 2
-      );
-      c.fillStyle = "rgba(173,255,47,0.5)";
-      c.fillRect(
-        this.position.x + widthOffset,
-        this.position.y + heightOffset,
-        this.width + player.position.x,
-        this.height + player.position.y
-      );
+    let positionXDrawImageOffset = 2;
+    if (this.direction === "right" && this.state === "idle") {
+      positionXDrawImageOffset = 10;
     }
-
     c.drawImage(
       this.currentSprite,
       frameX,
       frame.y,
       frameW,
       this.character.positions[this.state].height,
-      this.position.x + widthOffset,
-      this.position.y + heightOffset,
-      this.character.positions[this.state].width * 2,
-      this.character.positions[this.state].height * 2
+      this.position.x - positionXDrawImageOffset,
+      this.position.y,
+      this.character.positions[this.state].width * this.character.zoom,
+      this.character.positions[this.state].height * this.character.zoom
     );
-
-    //  c.drawImage(
-    //     this.currentSprite,
-    //     this.currentCropWidth * this.frames,
-    //     0,
-    //     this.currentCropWidth,
-    //     400,
-    //      this.position.x,
-    //      this.position.y,
-    //      this.width,
-    //      this.height
-    //      )
+    console.log(
+      this.direction,
+      this.state,
+      this.character.positions[this.state].width * this.character.zoom
+    );
   }
 
   frameDelay = 30;
@@ -130,6 +112,7 @@ class Platform {
     this.width = image.width;
     this.height = image.height;
   }
+
   draw() {
     c.drawImage(this.image, this.position.x, this.position.y);
   }
@@ -145,6 +128,7 @@ class GenericObject {
     this.width = image.width;
     this.height = image.height;
   }
+
   draw() {
     c.drawImage(this.image, this.position.x, this.position.y);
   }
@@ -184,6 +168,38 @@ function init() {
       y: 270,
       image: createImage(platformSmallTall),
     }),
+    new Platform({
+      x:
+        platformImage.width * 14 +
+        1200 -
+        2 +
+        platformImage.width -
+        platformSmallTallImage.width,
+      y: 270,
+      image: createImage(platformSmallTall),
+    }),
+    new Platform({
+      x:
+        platformImage.width * 15 +
+        1200 -
+        2 +
+        platformImage.width -
+        platformSmallTallImage.width,
+      y: 270,
+      image: createImage(platformSmallTall),
+    }),
+    new Platform({
+      x:
+        platformImage.width * 21 +
+        1200 -
+        2 +
+        platformImage.width -
+        platformSmallTallImage.width,
+      y: 270,
+      image: createImage(platformSmallTall),
+    }),
+
+    // flat platforms
 
     new Platform({
       x: -1,
@@ -210,8 +226,129 @@ function init() {
       y: 470,
       image: platformImage,
     }),
+
     new Platform({
       x: platformImage.width * 5 + 700 - 2,
+      y: 470,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 6 + 700 - 4,
+      y: 470,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 7 + 900 - 4,
+      y: 470,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 8 + 800 - 2,
+      y: 345,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 9 + 800 - 3,
+      y: 225,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 10 + 700 - 2,
+      y: 350,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 11 + 700 - 2,
+      y: 225,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 12 + 1200 - 2,
+      y: 470,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 13 + 1200 - 4,
+      y: 470,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 14 + 1200 - 6,
+      y: 470,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 15 + 1200 - 9,
+      y: 470,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 16 + 1200 - 11,
+      y: 470,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 17 + 1200 - 2,
+      y: 370,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 18 + 1200 - 2,
+      y: 270,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 19 + 1200 - 2,
+      y: 170,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 20 + 1200 - 2,
+      y: 70,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 21 + 1100 - 2,
+      y: 470,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 22 + 1100 - 4,
+      y: 470,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 22 + 1000 - 2,
+      y: 70,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 23 + 1250 - 2,
+      y: 170,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 24 + 1250 - 2,
+      y: 270,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 25 + 1250 - 2,
+      y: 370,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 26 + 1250 - 2,
+      y: 470,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 27 + 1250 - 4,
+      y: 470,
+      image: platformImage,
+    }),
+    new Platform({
+      x: platformImage.width * 28 + 1600 - 2,
       y: 470,
       image: platformImage,
     }),
@@ -232,7 +369,6 @@ function init() {
 
   scrollOffset = 0;
 }
-
 export function animate() {
   requestAnimationFrame(animate);
   c.fillStyle = "white";
@@ -246,9 +382,6 @@ export function animate() {
     platform.draw();
   });
   player.update();
-
-  debug.update();
-  debug.draw();
 
   if (keys.right.pressed && player.position.x < 400) {
     player.velocity.x = player.speed;
@@ -318,14 +451,21 @@ export function animate() {
   }
 
   // win condition
-  if (scrollOffset > platformImage.width * 5 + 700 - 2) {
-    console.log("You Passed the Hunter Exam");
+  function restart() {
+    location.replace("https://dioality.glowfinger.com/");
+  }
+  if (scrollOffset > platformImage.width * 29 + 1100 - 2) {
+    alert("You Passed the Hunter Exam").onclick = restart();
   }
   // lose condition
   if (player.position.y > canvas.height) {
     init();
     console.log("You have failed");
   }
+
+  debug.updatePlayer(player);
+  debug.updatePlatforms(platforms);
+  debug.draw(c);
 }
 
 // change the instance into key from e after you have it working.
