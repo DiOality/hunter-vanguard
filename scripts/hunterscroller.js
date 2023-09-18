@@ -2,9 +2,9 @@ import platform from "../Img/platform.png";
 import hills from "../Img/hills.png";
 import background from "../Img/background.png";
 import platformSmallTall from "../Img/platformSmallTall.png";
-import Debug from "./Debug";
 import Killua from "./spriteSheets/Killua";
 import createImage from "./createImage";
+import Debug from './debug/Debug'
 
 const canvas = document.querySelector("#gameCanvas");
 const c = canvas.getContext("2d");
