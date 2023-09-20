@@ -5,7 +5,7 @@ import Killua from "./spriteSheets/Killua";
 import createImage from "./createImage";
 import Debug from "./debug/Debug";
 
-import platforms from "./models/generatePlatforms";
+import generatePlatforms from "./models/generatePlatforms";
 
 const canvas = document.querySelector("#gameCanvas");
 const c = canvas.getContext("2d");
@@ -14,7 +14,7 @@ canvas.width = 1024;
 canvas.height = 576;
 const debug = new Debug(false);
 const gravity = 0.49;
-
+let platforms = [];
 // hitbox
 class Player {
   constructor() {
@@ -134,8 +134,9 @@ const keys = {
 
 let scrollOffset = 0;
 
-function init() {
+export default function init() {
   player = new Player();
+  platforms = generatePlatforms;
 
   genericObjects = [
     new GenericObject({
