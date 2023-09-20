@@ -1,10 +1,11 @@
-import platform from "../Img/platform.png";
 import hills from "../Img/hills.png";
 import background from "../Img/background.png";
-import platformSmallTall from "../Img/platformSmallTall.png";
+
 import Killua from "./spriteSheets/Killua";
 import createImage from "./createImage";
-import Debug from './debug/Debug'
+import Debug from "./debug/Debug";
+
+import platforms from "./models/generatePlatforms";
 
 const canvas = document.querySelector("#gameCanvas");
 const c = canvas.getContext("2d");
@@ -102,22 +103,6 @@ class Player {
   }
 }
 
-class Platform {
-  constructor({ x, y, image }) {
-    this.position = {
-      x: x,
-      y: y,
-    };
-    this.image = image;
-    this.width = image.width;
-    this.height = image.height;
-  }
-
-  draw() {
-    c.drawImage(this.image, this.position.x, this.position.y);
-  }
-}
-
 class GenericObject {
   constructor({ x, y, image }) {
     this.position = {
@@ -134,11 +119,7 @@ class GenericObject {
   }
 }
 
-let platformImage = createImage(platform);
-let platformSmallTallImage = createImage(platformSmallTall);
-
 let player = new Player();
-let platforms = [];
 let genericObjects = [];
 
 let lastKey;
@@ -154,205 +135,7 @@ const keys = {
 let scrollOffset = 0;
 
 function init() {
-  platformImage = createImage(platform);
-
   player = new Player();
-  platforms = [
-    new Platform({
-      x:
-        platformImage.width * 4 +
-        300 -
-        2 +
-        platformImage.width -
-        platformSmallTallImage.width,
-      y: 270,
-      image: createImage(platformSmallTall),
-    }),
-    new Platform({
-      x:
-        platformImage.width * 14 +
-        1200 -
-        2 +
-        platformImage.width -
-        platformSmallTallImage.width,
-      y: 270,
-      image: createImage(platformSmallTall),
-    }),
-    new Platform({
-      x:
-        platformImage.width * 15 +
-        1200 -
-        2 +
-        platformImage.width -
-        platformSmallTallImage.width,
-      y: 270,
-      image: createImage(platformSmallTall),
-    }),
-    new Platform({
-      x:
-        platformImage.width * 21 +
-        1200 -
-        2 +
-        platformImage.width -
-        platformSmallTallImage.width,
-      y: 270,
-      image: createImage(platformSmallTall),
-    }),
-
-    // flat platforms
-
-    new Platform({
-      x: -1,
-      y: 470,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width - 3,
-      y: 470,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 2 + 100,
-      y: 470,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 3 + 300,
-      y: 470,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 4 + 300 - 2,
-      y: 470,
-      image: platformImage,
-    }),
-
-    new Platform({
-      x: platformImage.width * 5 + 700 - 2,
-      y: 470,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 6 + 700 - 4,
-      y: 470,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 7 + 900 - 4,
-      y: 470,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 8 + 800 - 2,
-      y: 345,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 9 + 800 - 3,
-      y: 225,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 10 + 700 - 2,
-      y: 350,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 11 + 700 - 2,
-      y: 225,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 12 + 1200 - 2,
-      y: 470,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 13 + 1200 - 4,
-      y: 470,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 14 + 1200 - 6,
-      y: 470,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 15 + 1200 - 9,
-      y: 470,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 16 + 1200 - 11,
-      y: 470,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 17 + 1200 - 2,
-      y: 370,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 18 + 1200 - 2,
-      y: 270,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 19 + 1200 - 2,
-      y: 170,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 20 + 1200 - 2,
-      y: 70,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 21 + 1100 - 2,
-      y: 470,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 22 + 1100 - 4,
-      y: 470,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 22 + 1000 - 2,
-      y: 70,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 23 + 1250 - 2,
-      y: 170,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 24 + 1250 - 2,
-      y: 270,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 25 + 1250 - 2,
-      y: 370,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 26 + 1250 - 2,
-      y: 470,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 27 + 1250 - 4,
-      y: 470,
-      image: platformImage,
-    }),
-    new Platform({
-      x: platformImage.width * 28 + 1600 - 2,
-      y: 470,
-      image: platformImage,
-    }),
-  ];
 
   genericObjects = [
     new GenericObject({
@@ -379,7 +162,7 @@ export function animate() {
   });
 
   platforms.forEach((platform) => {
-    platform.draw();
+    platform.draw(c);
   });
   player.update();
 
@@ -454,7 +237,7 @@ export function animate() {
   function restart() {
     location.replace("https://dioality.glowfinger.com/");
   }
-  if (scrollOffset > platformImage.width * 29 + 1100 - 2) {
+  if (scrollOffset > 580 * 29 + 1100 - 2) {
     alert("You Passed the Hunter Exam").onclick = restart();
   }
   // lose condition
